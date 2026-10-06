@@ -1,0 +1,11 @@
+src/backend.vala
+src/card.vala
+src/create.vala
+src/details.vala
+src/host.vala
+src/libvirt_backend.vala
+src/machine.vala
+src/main.vala
+src/qemu_backend.vala
+src/qmp.vala
+src/window.vala

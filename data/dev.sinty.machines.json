@@ -1,0 +1,24 @@
+{
+    "schema-id": "dev.sinty.machines",
+    "settings": [
+        {
+            "key": "keep-running",
+            "label": "Keep Machines Running After Closing",
+            "subtitle": "When off, running machines are asked to shut down",
+            "type": "boolean",
+            "widget": "toggle"
+        },
+        {
+            "key": "live-thumbnails",
+            "label": "Live Pictures of Running Machines",
+            "type": "boolean",
+            "widget": "toggle"
+        },
+        {
+            "key": "prefer-uefi",
+            "label": "Use UEFI for New Machines",
+            "type": "boolean",
+            "widget": "toggle"
+        }
+    ]
+}

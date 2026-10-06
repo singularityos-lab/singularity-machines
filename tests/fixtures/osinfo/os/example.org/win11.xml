@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<libosinfo version="0.0.1">
+  <os id="http://microsoft.com/win/11">
+    <short-id>win11</short-id>
+    <name>Microsoft Windows 11</name>
+    <version>11</version>
+    <family>winnt</family>
+    <distro>win</distro>
+    <firmware arch="x86_64" type="efi"/>
+    <firmware arch="x86_64" type="bios" supported="false"/>
+    <resources arch="x86_64">
+      <recommended>
+        <n-cpus>2</n-cpus>
+        <ram>4294967296</ram>
+        <storage>68719476736</storage>
+      </recommended>
+    </resources>
+    <media arch="x86_64">
+      <iso>
+        <volume-id>CCCOMA_X64FRE_.*</volume-id>
+      </iso>
+    </media>
+  </os>
+</libosinfo>

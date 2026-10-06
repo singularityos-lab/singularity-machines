@@ -1,0 +1,16 @@
+[Desktop Entry]
+Name=Machines
+Comment=Run other operating systems in virtual machines
+Exec=singularity-machines %f
+Icon=dev.sinty.machines
+Terminal=false
+Type=Application
+Categories=System;Emulator;
+Keywords=virtual;machine;vm;qemu;kvm;iso;boxes;virtualization;
+MimeType=application/x-cd-image;application/x-qemu-disk;application/x-raw-disk-image;application/x-virtualbox-vdi;
+StartupWMClass=dev.sinty.machines
+Actions=new-machine;
+
+[Desktop Action new-machine]
+Name=New Machine
+Exec=singularity-machines --new-machine

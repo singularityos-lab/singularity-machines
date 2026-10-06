@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="dev.sinty.machines" path="/dev/sinty/machines/">
+    <key name="live-thumbnails" type="b">
+      <default>true</default>
+      <summary>Live thumbnails</summary>
+      <description>Refresh the pictures of running machines in the overview every few seconds.</description>
+    </key>
+    <key name="keep-running" type="b">
+      <default>true</default>
+      <summary>Keep machines running</summary>
+      <description>Leave running machines on when the window closes. When off, they are asked to shut down.</description>
+    </key>
+    <key name="prefer-uefi" type="b">
+      <default>false</default>
+      <summary>Prefer UEFI</summary>
+      <description>Turn on UEFI firmware for new machines even when the system does not ask for it.</description>
+    </key>
+  </schema>
+</schemalist>

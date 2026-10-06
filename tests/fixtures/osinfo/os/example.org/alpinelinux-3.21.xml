@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<libosinfo version="0.0.1">
+  <os id="http://alpinelinux.org/alpinelinux/3.21">
+    <short-id>alpinelinux3.21</short-id>
+    <name>Alpine Linux 3.21</name>
+    <version>3.21</version>
+    <family>linux</family>
+    <distro>alpinelinux</distro>
+    <derives-from id="http://alpinelinux.org/alpinelinux/3.20"/>
+    <media arch="x86_64">
+      <iso>
+        <volume-id>alpine-virt 3\.21.* x86_64$</volume-id>
+      </iso>
+    </media>
+  </os>
+</libosinfo>

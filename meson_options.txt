@@ -1,0 +1,5 @@
+option('vm-backend', type: 'combo', choices: ['auto', 'qemu', 'libvirt'], value: 'auto', description: 'Default way to run machines. auto uses QEMU directly when it is installed and libvirt otherwise. Overridden by Backend in singularity/machines.conf.')
+option('qemu', type: 'string', value: '', description: 'QEMU system emulator to run. Empty picks qemu-system-<host architecture> from PATH. Overridden by Qemu in singularity/machines.conf.')
+option('firmware-dirs', type: 'string', value: '', description: 'Colon separated folders with QEMU firmware descriptors (JSON). Empty uses the standard qemu/firmware folders. Overridden by FirmwareDescriptors in singularity/machines.conf.')
+option('osinfo-dirs', type: 'string', value: '', description: 'Colon separated osinfo-db roots used to recognize systems. Empty uses the libosinfo defaults. Overridden by OsinfoPath in singularity/machines.conf.')
+option('libvirt', type: 'boolean', value: true, description: 'Include the libvirt backend, driven through virsh when it is installed')
