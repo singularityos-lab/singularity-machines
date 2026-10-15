@@ -74,7 +74,7 @@ namespace Singularity.Apps.Machines {
 
             var quit = new SimpleAction ("quit", null);
             quit.activate.connect (() => {
-                foreach (var w in get_windows ()) w.close ();
+                foreach (var w in get_windows ().copy ()) w.close ();
             });
             add_action (quit);
             var settings_action = new SimpleAction ("settings", null);
