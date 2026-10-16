@@ -22,10 +22,12 @@ namespace Singularity.Apps.Machines {
         public string pid { owned get { return Path.build_filename (dir, "pid"); } }
         public string fs_socket { owned get { return Path.build_filename (dir, "fs"); } }
         public string fs_pid { owned get { return Path.build_filename (dir, "fs.pid"); } }
+        public string tpm_socket { owned get { return Path.build_filename (dir, "tpm"); } }
+        public string tpm_pid { owned get { return Path.build_filename (dir, "tpm.pid"); } }
         public string log { owned get { return Path.build_filename (dir, "log"); } }
 
         public bool fits () {
-            return qmp.length < 108 && vnc.length < 108 && fs_socket.length < 108;
+            return qmp.length < 108 && vnc.length < 108 && fs_socket.length < 108 && tpm_socket.length < 108;
         }
     }
 
@@ -38,6 +40,7 @@ namespace Singularity.Apps.Machines {
         public string loadvm { get; set; default = ""; }
         public bool daemonize { get; set; default = true; }
         public bool clipboard_agent { get; set; default = true; }
+        public bool tpm { get; set; }
 
         public static string escape (string value) {
             return value.replace (",", ",,");
@@ -102,6 +105,14 @@ namespace Singularity.Apps.Machines {
             a += windows ? "user,model=e1000e" : "user,model=virtio-net-pci";
             a += "-device";
             a += "virtio-rng-pci";
+            if (tpm) {
+                a += "-chardev";
+                a += "socket,id=tpm0chr,path=%s".printf (escape (rt.tpm_socket));
+                a += "-tpmdev";
+                a += "emulator,id=tpm0,chardev=tpm0chr";
+                a += "-device";
+                a += arch == "aarch64" ? "tpm-tis-device,tpmdev=tpm0" : "tpm-tis,tpmdev=tpm0";
+            }
             a += "-drive";
             a += "file=%s,if=none,id=disk0,format=qcow2,discard=unmap".printf (escape (m.disk_path ()));
             a += "-device";
@@ -142,6 +153,10 @@ namespace Singularity.Apps.Machines {
 
         public static string[] virtiofsd_args (string binary, string socket, string folder) {
             return { binary, "--socket-path=" + socket, "--shared-dir=" + folder, "--sandbox=none", "--cache=auto" };
+        }
+
+        public static string[] swtpm_args (string binary, string socket, string state, string pid) {
+            return { binary, "socket", "--tpm2", "--tpmstate", "dir=" + state, "--ctrl", "type=unixio,path=" + socket, "--pid", "file=" + pid, "--flags", "startup-clear", "--terminate", "--daemon" };
         }
 
         public static string[] create_disk_args (string qemu_img, string path, int gib) {

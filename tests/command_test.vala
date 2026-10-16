@@ -184,6 +184,26 @@ int main (string[] args) {
         assert (v[2] == "--shared-dir=/home/me/Share");
     });
 
+    Test.add_func ("/command/tpm", () => {
+        var rt = runtime ();
+        var m = sample ();
+        var cmd = new QemuCommand ();
+        string[] a = cmd.build (m, rt);
+        assert (index_of (a, "-tpmdev") < 0);
+        cmd.tpm = true;
+        a = cmd.build (m, rt);
+        assert (has_pair (a, "-chardev", "socket,id=tpm0chr,path=/run/user/1000/machines-0badcafe/tpm"));
+        assert (has_pair (a, "-tpmdev", "emulator,id=tpm0,chardev=tpm0chr"));
+        assert (has_pair (a, "-device", "tpm-tis,tpmdev=tpm0"));
+        cmd.arch = "aarch64";
+        a = cmd.build (m, rt);
+        assert (has_pair (a, "-device", "tpm-tis-device,tpmdev=tpm0"));
+        string[] s = QemuCommand.swtpm_args ("swtpm", rt.tpm_socket, m.tpm_state_dir (), rt.tpm_pid);
+        assert (has_pair (s, "--tpmstate", "dir=/data/machines/0badcafe/tpm"));
+        assert (has_pair (s, "--ctrl", "type=unixio,path=/run/user/1000/machines-0badcafe/tpm"));
+        assert (index_of (s, "--terminate") > 0 && index_of (s, "--daemon") > 0);
+    });
+
     Test.add_func ("/command/loadvm-and-media", () => {
         var rt = runtime ();
         var m = sample ();

@@ -144,6 +144,10 @@ namespace Singularity.Apps.Machines {
             return Environment.find_program_in_path ("virtiofsd");
         }
 
+        public string? swtpm_binary () {
+            return Environment.find_program_in_path ("swtpm");
+        }
+
         public bool kvm_available () {
             return FileUtils.test (kvm_device, FileTest.EXISTS) && Posix.access (kvm_device, Posix.R_OK | Posix.W_OK) == 0;
         }

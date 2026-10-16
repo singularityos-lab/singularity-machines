@@ -24,6 +24,7 @@ namespace Singularity.Apps.Machines {
         public string source_image { get; set; default = ""; }
         public string shared_folder { get; set; default = ""; }
         public bool resize_guest { get; set; default = true; }
+        public bool tpm { get; set; }
         public int64 created { get; set; }
         public int64 last_used { get; set; }
         public string dir { get; set; default = ""; }
@@ -37,6 +38,10 @@ namespace Singularity.Apps.Machines {
 
         public string vars_path () {
             return Path.build_filename (dir, "efivars.qcow2");
+        }
+
+        public string tpm_state_dir () {
+            return Path.build_filename (dir, "tpm");
         }
 
         public string screenshot_path () {
@@ -84,6 +89,7 @@ namespace Singularity.Apps.Machines {
             b.set_member_name ("source-image").add_string_value (source_image);
             b.set_member_name ("shared-folder").add_string_value (shared_folder);
             b.set_member_name ("resize-guest").add_boolean_value (resize_guest);
+            b.set_member_name ("tpm").add_boolean_value (tpm);
             b.set_member_name ("created").add_int_value (created);
             b.set_member_name ("last-used").add_int_value (last_used);
             b.set_member_name ("snapshots");
@@ -122,6 +128,7 @@ namespace Singularity.Apps.Machines {
             m.source_image = o.get_string_member_with_default ("source-image", "");
             m.shared_folder = o.get_string_member_with_default ("shared-folder", "");
             m.resize_guest = o.get_boolean_member_with_default ("resize-guest", true);
+            m.tpm = o.get_boolean_member_with_default ("tpm", false);
             m.created = o.get_int_member_with_default ("created", 0);
             m.last_used = o.get_int_member_with_default ("last-used", 0);
             if (o.has_member ("snapshots")) {
@@ -239,6 +246,14 @@ namespace Singularity.Apps.Machines {
                 foreach (string f in new string[] { "machine.json", "disk.qcow2", "efivars.qcow2", "screenshot.png", "import.log" }) {
                     FileUtils.unlink (Path.build_filename (m.dir, f));
                 }
+                string tpm = m.tpm_state_dir ();
+                try {
+                    var d = Dir.open (tpm);
+                    string? name;
+                    while ((name = d.read_name ()) != null) FileUtils.unlink (Path.build_filename (tpm, name));
+                } catch (Error e) {
+                }
+                DirUtils.remove (tpm);
                 DirUtils.remove (m.dir);
             }
             changed ();

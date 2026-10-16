@@ -144,7 +144,7 @@ namespace Singularity.Apps.Machines {
         }
 
         private void clean_runtime () {
-            foreach (string f in new string[] { runtime.qmp, runtime.vnc, runtime.pid, runtime.fs_socket, runtime.fs_pid, runtime.fs_socket + ".pid" }) FileUtils.unlink (f);
+            foreach (string f in new string[] { runtime.qmp, runtime.vnc, runtime.pid, runtime.fs_socket, runtime.fs_pid, runtime.fs_socket + ".pid", runtime.tpm_socket, runtime.tpm_pid }) FileUtils.unlink (f);
             DirUtils.remove (runtime.dir);
         }
 
@@ -209,6 +209,7 @@ namespace Singularity.Apps.Machines {
             attached_usb.clear ();
             int fs = Tool.read_pid (runtime.fs_pid);
             if (Tool.owns_pid (fs, runtime.fs_socket)) Posix.kill (fs, Posix.Signal.TERM);
+            stop_swtpm ();
             clean_runtime ();
             state = MachineState.OFF;
             status_detail = "";
@@ -251,6 +252,19 @@ namespace Singularity.Apps.Machines {
             }
         }
 
+        private void stop_swtpm () {
+            int tpm = Tool.read_pid (runtime.tpm_pid);
+            if (Tool.owns_pid (tpm, runtime.tpm_socket)) Posix.kill (tpm, Posix.Signal.TERM);
+        }
+
+        private async void start_swtpm (string binary) throws Error {
+            DirUtils.create_with_parents (machine.tpm_state_dir (), 0700);
+            FileUtils.unlink (runtime.tpm_socket);
+            yield Tool.run (QemuCommand.swtpm_args (binary, runtime.tpm_socket, machine.tpm_state_dir (), runtime.tpm_pid));
+            for (int i = 0; i < 100 && !FileUtils.test (runtime.tpm_socket, FileTest.EXISTS); i++) yield Tool.sleep (50);
+            if (!FileUtils.test (runtime.tpm_socket, FileTest.EXISTS)) throw new IOError.FAILED (_("The TPM emulator did not start."));
+        }
+
         public override async void start (string? restore_tag = null) throws Error {
             if (state.alive () || state == MachineState.STARTING) return;
             var host = backend.host;
@@ -282,8 +296,14 @@ namespace Singularity.Apps.Machines {
                         shared_mode = SharedMode.NINEP;
                     }
                 }
+                if (machine.tpm) {
+                    string? swtpm = host.swtpm_binary ();
+                    if (swtpm == null) throw new IOError.NOT_FOUND (_("This machine needs a TPM, and swtpm is not installed."));
+                    yield start_swtpm (swtpm);
+                }
                 var cmd = new QemuCommand ();
                 cmd.binary = qemu;
+                cmd.tpm = machine.tpm;
                 cmd.arch = host.arch;
                 cmd.kvm = host.kvm_available ();
                 cmd.firmware = fw;
@@ -295,6 +315,7 @@ namespace Singularity.Apps.Machines {
             } catch (Error e) {
                 int fs = Tool.read_pid (runtime.fs_pid);
                 if (Tool.owns_pid (fs, runtime.fs_socket)) Posix.kill (fs, Posix.Signal.TERM);
+                stop_swtpm ();
                 if (qmp == null) {
                     clean_runtime ();
                     state = MachineState.OFF;
