@@ -11,6 +11,7 @@ gtk_dep = dependency('gtk4', version: '>= 4.12')
 gee_dep = dependency('gee-0.8')
 json_dep = dependency('json-glib-1.0')
 gio_unix_dep = dependency('gio-unix-2.0')
+m_dep = meson.get_compiler('c').find_library('m', required: false)
 
 libsingularity_dep = dependency('singularity-1.0',
   fallback: ['libsingularity', 'libsingularity_dep']
@@ -60,7 +61,7 @@ executable('singularity-machines',
   sources,
   vala_args: vala_args,
   c_args: config_c_args,
-  dependencies: [gtk_dep, gee_dep, json_dep, gio_unix_dep, libsingularity_dep],
+  dependencies: [gtk_dep, gee_dep, json_dep, gio_unix_dep, m_dep, libsingularity_dep],
   install: true
 )
 
