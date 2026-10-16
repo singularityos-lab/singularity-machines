@@ -29,6 +29,7 @@ namespace Singularity.Apps.Machines {
         public int64 last_used { get; set; }
         public string dir { get; set; default = ""; }
         public Gee.ArrayList<SnapshotInfo> snapshots = new Gee.ArrayList<SnapshotInfo> ();
+        public Gee.ArrayList<string> forwards = new Gee.ArrayList<string> ();
 
         public signal void changed ();
 
@@ -38,6 +39,18 @@ namespace Singularity.Apps.Machines {
 
         public string vars_path () {
             return Path.build_filename (dir, "efivars.qcow2");
+        }
+
+        public bool is_sinty () {
+            return os_name.down ().contains ("sinty") || os_id.down ().contains ("sinty") || name.down ().contains ("sinty");
+        }
+
+        public int forward_for_guest (int guest) {
+            foreach (string f in forwards) {
+                string[] parts = f.split (":");
+                if (parts.length == 3 && parts[0] == "tcp" && int.parse (parts[2]) == guest) return int.parse (parts[1]);
+            }
+            return 0;
         }
 
         public string tpm_state_dir () {
@@ -90,6 +103,10 @@ namespace Singularity.Apps.Machines {
             b.set_member_name ("shared-folder").add_string_value (shared_folder);
             b.set_member_name ("resize-guest").add_boolean_value (resize_guest);
             b.set_member_name ("tpm").add_boolean_value (tpm);
+            b.set_member_name ("forwards");
+            b.begin_array ();
+            foreach (string f in forwards) b.add_string_value (f);
+            b.end_array ();
             b.set_member_name ("created").add_int_value (created);
             b.set_member_name ("last-used").add_int_value (last_used);
             b.set_member_name ("snapshots");
@@ -129,6 +146,13 @@ namespace Singularity.Apps.Machines {
             m.shared_folder = o.get_string_member_with_default ("shared-folder", "");
             m.resize_guest = o.get_boolean_member_with_default ("resize-guest", true);
             m.tpm = o.get_boolean_member_with_default ("tpm", false);
+            if (o.has_member ("forwards")) {
+                var fw = o.get_array_member ("forwards");
+                for (uint i = 0; i < fw.get_length (); i++) {
+                    string? f = fw.get_string_element (i);
+                    if (f != null && Regex.match_simple ("^tcp:[0-9]{1,5}:[0-9]{1,5}$", f)) m.forwards.add (f);
+                }
+            }
             m.created = o.get_int_member_with_default ("created", 0);
             m.last_used = o.get_int_member_with_default ("last-used", 0);
             if (o.has_member ("snapshots")) {

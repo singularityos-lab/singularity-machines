@@ -48,6 +48,19 @@ namespace Singularity.Apps.Machines {
             }
         }
 
+        public int free_port (int first) {
+            for (int port = first; port < first + 200; port++) {
+                try {
+                    var sock = new Socket (SocketFamily.IPV4, SocketType.STREAM, SocketProtocol.TCP);
+                    sock.bind (new InetSocketAddress (new InetAddress.loopback (SocketFamily.IPV4), (uint16) port), false);
+                    sock.close ();
+                    return port;
+                } catch (Error e) {
+                }
+            }
+            return 0;
+        }
+
         public async void sleep (uint ms) {
             Timeout.add (ms, sleep.callback);
             yield;
@@ -294,6 +307,17 @@ namespace Singularity.Apps.Machines {
                         }
                     } else {
                         shared_mode = SharedMode.NINEP;
+                    }
+                }
+                if (machine.is_sinty () && machine.forward_for_guest (5555) == 0) {
+                    int port = Tool.free_port (5555);
+                    if (port > 0) {
+                        machine.forwards.add ("tcp:%d:5555".printf (port));
+                        try {
+                            FileUtils.set_contents (machine.config_path (), machine.serialize ());
+                        } catch (Error e) {
+                            warning ("machines: %s", e.message);
+                        }
                     }
                 }
                 if (machine.tpm) {

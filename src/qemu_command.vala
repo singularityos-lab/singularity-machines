@@ -101,8 +101,13 @@ namespace Singularity.Apps.Machines {
                 a += "-device";
                 a += "usb-kbd,bus=xhci.0,id=keyboard";
             }
+            var nic = new StringBuilder (windows ? "user,model=e1000e" : "user,model=virtio-net-pci");
+            foreach (string f in m.forwards) {
+                string[] parts = f.split (":");
+                if (parts.length == 3) nic.append_printf (",hostfwd=tcp:127.0.0.1:%s-:%s", parts[1], parts[2]);
+            }
             a += "-nic";
-            a += windows ? "user,model=e1000e" : "user,model=virtio-net-pci";
+            a += nic.str;
             a += "-device";
             a += "virtio-rng-pci";
             if (tpm) {

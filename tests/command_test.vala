@@ -204,6 +204,20 @@ int main (string[] args) {
         assert (index_of (s, "--terminate") > 0 && index_of (s, "--daemon") > 0);
     });
 
+    Test.add_func ("/command/forwards", () => {
+        var rt = runtime ();
+        var m = sample ();
+        var cmd = new QemuCommand ();
+        assert (has_pair (cmd.build (m, rt), "-nic", "user,model=virtio-net-pci"));
+        m.forwards.add ("tcp:5600:5555");
+        assert (has_pair (cmd.build (m, rt), "-nic", "user,model=virtio-net-pci,hostfwd=tcp:127.0.0.1:5600-:5555"));
+        assert (m.forward_for_guest (5555) == 5600 && m.forward_for_guest (22) == 0);
+        m.os_name = "Sinty OS Event Horizon 26";
+        assert (m.is_sinty ());
+        var back = Machine.parse (m.serialize ());
+        assert (back != null && back.forwards.size == 1 && back.forwards[0] == "tcp:5600:5555");
+    });
+
     Test.add_func ("/command/loadvm-and-media", () => {
         var rt = runtime ();
         var m = sample ();

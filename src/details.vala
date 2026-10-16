@@ -143,6 +143,8 @@ namespace Singularity.Apps.Machines {
             system.add_row (new ActionRow (_("Acceleration"), accel));
             system.add_row (new ActionRow (_("Runs With"), manager.backend_for (m).label));
             system.add_row (new ActionRow (_("Disk"), m.disk_path ()));
+            int sdb = m.forward_for_guest (5555);
+            if (sdb > 0) system.add_row (new ActionRow (_("Debug Bridge"), "sdb pair 127.0.0.1:%d".printf (sdb), "utilities-terminal"));
             content.append (system);
 
             var danger = new PreferencesGroup (_("Remove"));
