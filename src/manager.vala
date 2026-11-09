@@ -53,15 +53,16 @@ namespace Singularity.Apps.Machines {
             if (osdb_ready) return osdb;
             string[] dirs = host.effective_osinfo_dirs ();
             OsDatabase? result = null;
-            SourceFunc resume = load_osdb.callback;
-            new Thread<bool> ("osinfo", () => {
-                var db = new OsDatabase ();
-                db.load_dirs (dirs);
-                result = db;
-                Idle.add ((owned) resume);
-                return true;
-            });
-            yield;
+            try {
+                yield Async.run<bool>((c) => {
+                    var db = new OsDatabase ();
+                    db.load_dirs (dirs);
+                    result = db;
+                    return true;
+                }, Async.Qos.USER);
+            } catch (Error e) {
+                warning("%s", e.message);
+            }
             osdb = result != null && result.entries.size > 0 ? result : null;
             osdb_ready = true;
             return osdb;
