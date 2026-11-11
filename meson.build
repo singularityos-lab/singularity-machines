@@ -55,6 +55,7 @@ sources = core_sources + files(
   'src/details.vala',
   'src/window.vala',
   'src/main.vala',
+  'src/agent_intents.vala',
 )
 
 executable('singularity-machines',

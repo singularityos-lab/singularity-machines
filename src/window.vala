@@ -598,7 +598,7 @@ namespace Singularity.Apps.Machines {
             dlg.present ();
         }
 
-        private async void delete_machine (Machine m) {
+        internal async void delete_machine (Machine m) {
             var c = manager.controller (m);
             if (current == m) {
                 end_session ();

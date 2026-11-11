@@ -71,6 +71,7 @@ namespace Singularity.Apps.Machines {
             machine.append_section (null, m2);
             menu.append_submenu (_("Machine"), machine);
             set_menubar (menu);
+            MachinesIntents.install (this);
 
             var quit = new SimpleAction ("quit", null);
             quit.activate.connect (() => {
@@ -98,6 +99,11 @@ namespace Singularity.Apps.Machines {
             set_accels_for_action ("win.close", { "<Control>w" });
             set_accels_for_action ("win.new", { "<Control>n" });
             set_accels_for_action ("win.fullscreen", { "F11" });
+        }
+
+        internal MachinesWindow agent_window () {
+            if (window == null) activate ();
+            return window;
         }
 
         public override void activate () {
