@@ -92,6 +92,61 @@ install_data('data/icons/dev.sinty.machines.svg', 'data/icons/dev.sinty.machines
   install_dir: get_option('datadir') / 'icons' / 'hicolor' / 'scalable' / 'apps'
 )
 
+iride = find_program('iride', required: get_option('iride'))
+if iride.found()
+  custom_target('iride-icon-dev-sinty-machines',
+    input: 'data/icons/iride/dev.sinty.machines/iride.json',
+    output: 'dev.sinty.machines.iride',
+    depend_files: files(
+      'data/icons/iride/dev.sinty.machines/layers/000.svg',
+      'data/icons/iride/dev.sinty.machines/layers/001.svg',
+      'data/icons/iride/dev.sinty.machines/layers/002.svg',
+      'data/icons/iride/dev.sinty.machines/layers/003.svg',
+      'data/icons/iride/dev.sinty.machines/layers/004.svg',
+      'data/icons/iride/dev.sinty.machines/layers/005.svg',
+      'data/icons/iride/dev.sinty.machines/layers/006.svg',
+      'data/icons/iride/dev.sinty.machines/layers/007.svg',
+      'data/icons/iride/dev.sinty.machines/layers/008.svg',
+      'data/icons/iride/dev.sinty.machines/layers/009.svg',
+      'data/icons/iride/dev.sinty.machines/layers/010.svg',
+      'data/icons/iride/dev.sinty.machines/layers/011.svg',
+      'data/icons/iride/dev.sinty.machines/layers/012.svg',
+      'data/icons/iride/dev.sinty.machines/layers/013.svg',
+      'data/icons/iride/dev.sinty.machines/layers/014.svg',
+      'data/icons/iride/dev.sinty.machines/layers/015.svg',
+      'data/icons/iride/dev.sinty.machines/layers/016.svg',
+      'data/icons/iride/dev.sinty.machines/layers/017.svg',
+    ),
+    command: [iride, 'build', meson.current_source_dir() / 'data' / 'icons' / 'iride' / 'dev.sinty.machines', '@OUTPUT@'],
+    install: true,
+    install_dir: get_option('datadir') / 'icons' / 'hicolor' / 'scalable' / 'apps'
+  )
+endif
+
+if iride.found()
+  custom_target('iride-icon-dev-sinty-machines-snapshot',
+    input: 'data/icons/iride/dev.sinty.machines-snapshot/iride.json',
+    output: 'dev.sinty.machines-snapshot.iride',
+    depend_files: files(
+      'data/icons/iride/dev.sinty.machines-snapshot/layers/000.svg',
+      'data/icons/iride/dev.sinty.machines-snapshot/layers/001.svg',
+      'data/icons/iride/dev.sinty.machines-snapshot/layers/002.svg',
+      'data/icons/iride/dev.sinty.machines-snapshot/layers/003.svg',
+      'data/icons/iride/dev.sinty.machines-snapshot/layers/004.svg',
+      'data/icons/iride/dev.sinty.machines-snapshot/layers/005.svg',
+      'data/icons/iride/dev.sinty.machines-snapshot/layers/006.svg',
+      'data/icons/iride/dev.sinty.machines-snapshot/layers/007.svg',
+      'data/icons/iride/dev.sinty.machines-snapshot/layers/008.svg',
+      'data/icons/iride/dev.sinty.machines-snapshot/layers/009.svg',
+      'data/icons/iride/dev.sinty.machines-snapshot/layers/010.svg',
+      'data/icons/iride/dev.sinty.machines-snapshot/layers/011.svg',
+    ),
+    command: [iride, 'build', meson.current_source_dir() / 'data' / 'icons' / 'iride' / 'dev.sinty.machines-snapshot', '@OUTPUT@'],
+    install: true,
+    install_dir: get_option('datadir') / 'icons' / 'hicolor' / 'scalable' / 'apps'
+  )
+endif
+
 test_c_args = config_c_args
 test_deps = [dependency('gio-2.0'), gee_dep, json_dep]
 fixtures = meson.current_source_dir() / 'tests' / 'fixtures'

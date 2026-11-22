@@ -3,3 +3,5 @@ option('qemu', type: 'string', value: '', description: 'QEMU system emulator to 
 option('firmware-dirs', type: 'string', value: '', description: 'Colon separated folders with QEMU firmware descriptors (JSON). Empty uses the standard qemu/firmware folders. Overridden by FirmwareDescriptors in singularity/machines.conf.')
 option('osinfo-dirs', type: 'string', value: '', description: 'Colon separated osinfo-db roots used to recognize systems. Empty uses the libosinfo defaults. Overridden by OsinfoPath in singularity/machines.conf.')
 option('libvirt', type: 'boolean', value: true, description: 'Include the libvirt backend, driven through virsh when it is installed')
+option('iride', type: 'feature', value: 'disabled',
+  description: 'Compile the Iride icon next to its SVG')

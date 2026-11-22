@@ -1,0 +1,303 @@
+{
+ "format": 1,
+ "canvas": [
+  236,
+  236
+ ],
+ "box": [
+  0,
+  0,
+  212,
+  222
+ ],
+ "stack": [
+  {
+   "shadow": {
+    "dx": 0,
+    "dy": 5,
+    "blur": 6,
+    "color": "#1f1259",
+    "opacity": 0.42,
+    "region": [
+     -20,
+     -20,
+     276,
+     276
+    ]
+   },
+   "stack": [
+    {
+     "layer": "layers/000.svg",
+     "piece": "back"
+    },
+    {
+     "layer": "layers/001.svg",
+     "piece": "back"
+    },
+    {
+     "rim": "M62 20H190A16 16 0 0 1 206 36V122A16 16 0 0 1 190 138H62A16 16 0 0 1 46 122V36A16 16 0 0 1 62 20Z",
+     "light": [
+      46,
+      20,
+      206,
+      138
+     ],
+     "piece": "back"
+    },
+    {
+     "layer": "layers/002.svg",
+     "piece": "back"
+    },
+    {
+     "layer": "layers/003.svg",
+     "piece": "front"
+    },
+    {
+     "layer": "layers/004.svg",
+     "piece": "front"
+    },
+    {
+     "rim": "M42 58H194A18 18 0 0 1 212 76V190A18 18 0 0 1 194 208H42A18 18 0 0 1 24 190V76A18 18 0 0 1 42 58Z",
+     "light": [
+      24,
+      58,
+      212,
+      208
+     ],
+     "piece": "front"
+    }
+   ]
+  },
+  {
+   "layer": "layers/005.svg",
+   "piece": "front"
+  },
+  {
+   "clip": "M46 72H190A8 8 0 0 1 198 80V176A8 8 0 0 1 190 184H46A8 8 0 0 1 38 176V80A8 8 0 0 1 46 72Z",
+   "stack": [
+    {
+     "layer": "layers/006.svg",
+     "piece": "terminal"
+    },
+    {
+     "layer": "layers/007.svg",
+     "piece": "terminal"
+    },
+    {
+     "layer": "layers/008.svg",
+     "piece": "terminal"
+    },
+    {
+     "layer": "layers/009.svg",
+     "piece": "terminal"
+    },
+    {
+     "layer": "layers/010.svg",
+     "piece": "terminal"
+    },
+    {
+     "layer": "layers/011.svg",
+     "piece": "terminal"
+    },
+    {
+     "layer": "layers/012.svg",
+     "piece": "terminal"
+    },
+    {
+     "layer": "layers/013.svg",
+     "piece": "prompt"
+    },
+    {
+     "layer": "layers/014.svg",
+     "piece": "slider"
+    },
+    {
+     "layer": "layers/015.svg",
+     "piece": "indicator"
+    }
+   ]
+  },
+  {
+   "layer": "layers/016.svg",
+   "piece": "indicator"
+  },
+  {
+   "layer": "layers/017.svg",
+   "piece": "indicator"
+  }
+ ],
+ "motion": [
+  {
+   "piece": "back",
+   "origin": [
+    126.0,
+    79.0
+   ],
+   "tracks": [
+    {
+     "kind": "translate",
+     "from": [
+      0,
+      28.32
+     ],
+     "at": 500,
+     "duration": 240,
+     "ease": "spring"
+    },
+    {
+     "kind": "opacity",
+     "from": [
+      1
+     ],
+     "at": 760,
+     "duration": 75,
+     "ease": "linear"
+    }
+   ]
+  },
+  {
+   "piece": "front",
+   "origin": [
+    118.0,
+    118.0
+   ],
+   "tracks": []
+  },
+  {
+   "piece": "terminal",
+   "origin": [
+    118.0,
+    130.0
+   ],
+   "tracks": [
+    {
+     "kind": "scale",
+     "from": [
+      0.3,
+      0.3
+     ],
+     "at": 0,
+     "duration": 220,
+     "ease": "spring"
+    },
+    {
+     "kind": "opacity",
+     "from": [
+      0
+     ],
+     "at": 0,
+     "duration": 80,
+     "ease": "linear"
+    }
+   ]
+  },
+  {
+   "piece": "prompt",
+   "origin": [
+    78.0,
+    131.0
+   ],
+   "tracks": [
+    {
+     "kind": "opacity",
+     "from": [
+      0
+     ],
+     "at": 220,
+     "duration": 40,
+     "ease": "linear"
+    }
+   ]
+  },
+  {
+   "piece": "slider",
+   "origin": [
+    92.0,
+    138.0
+   ],
+   "tracks": [
+    {
+     "kind": "opacity",
+     "from": [
+      0
+     ],
+     "at": 260,
+     "duration": 20,
+     "ease": "linear"
+    },
+    {
+     "kind": "opacity",
+     "from": [
+      2
+     ],
+     "at": 280,
+     "duration": 80,
+     "ease": "linear"
+    },
+    {
+     "kind": "opacity",
+     "from": [
+      0
+     ],
+     "at": 360,
+     "duration": 80,
+     "ease": "linear"
+    },
+    {
+     "kind": "opacity",
+     "from": [
+      2
+     ],
+     "at": 440,
+     "duration": 80,
+     "ease": "linear"
+    },
+    {
+     "kind": "opacity",
+     "from": [
+      0
+     ],
+     "at": 520,
+     "duration": 80,
+     "ease": "linear"
+    }
+   ]
+  },
+  {
+   "piece": "indicator",
+   "origin": [
+    118.0,
+    118.0
+   ],
+   "tracks": [
+    {
+     "kind": "opacity",
+     "from": [
+      0
+     ],
+     "at": 560,
+     "duration": 60,
+     "ease": "linear"
+    },
+    {
+     "kind": "opacity",
+     "from": [
+      1.8
+     ],
+     "at": 620,
+     "duration": 60,
+     "ease": "linear"
+    },
+    {
+     "kind": "opacity",
+     "from": [
+      0.2
+     ],
+     "at": 680,
+     "duration": 80,
+     "ease": "linear"
+    }
+   ]
+  }
+ ]
+}
