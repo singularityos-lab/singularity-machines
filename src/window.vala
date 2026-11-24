@@ -118,9 +118,7 @@ namespace Singularity.Apps.Machines {
             });
             app.settings.changed["live-thumbnails"].connect (() => schedule_thumbnails ());
             close_request.connect (() => {
-                end_session ();
-                if (thumb_timer != 0) Source.remove (thumb_timer);
-                thumb_timer = 0;
+                tear_down ();
                 if (!app.settings.get_boolean ("keep-running")) {
                     foreach (var m in manager.store.items) {
                         var c = manager.existing (m);
@@ -260,6 +258,12 @@ namespace Singularity.Apps.Machines {
             if (name == "snapshots" && current != null) snapshots.show_machine (current);
             if (name == "grid") schedule_thumbnails ();
             if (!on_display) inhibit_shortcuts (false);
+        }
+
+        public void tear_down () {
+            end_session ();
+            if (thumb_timer != 0) Source.remove (thumb_timer);
+            thumb_timer = 0;
         }
 
         public void prepare_move () throws Singularity.Migration.MigrationError {

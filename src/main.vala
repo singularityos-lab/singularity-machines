@@ -128,6 +128,13 @@ namespace Singularity.Apps.Machines {
             });
         }
 
+        public void release_window (Gtk.Window w) {
+            var mw = w as MachinesWindow;
+            if (mw == null) return;
+            mw.tear_down ();
+            if (window == mw) window = null;
+        }
+
         public void prepare_move () throws Singularity.Migration.MigrationError {
             if (window != null) window.prepare_move ();
         }
