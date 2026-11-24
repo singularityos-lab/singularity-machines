@@ -262,6 +262,28 @@ namespace Singularity.Apps.Machines {
             if (!on_display) inhibit_shortcuts (false);
         }
 
+        public void prepare_move () throws Singularity.Migration.MigrationError {
+            foreach (var m in manager.store.items) {
+                if (manager.state_of (m).alive ()) throw new Singularity.Migration.MigrationError.UNSUPPORTED (_("%s is running on this device. Shut it down before moving Machines.").printf (m.title ()));
+            }
+        }
+
+        public Variant save_migration () {
+            var d = new VariantDict ();
+            d.insert_value ("page", new Variant.string (stack.visible_child_name));
+            d.insert_value ("machine", new Variant.string (current != null ? current.id : ""));
+            return d.end ();
+        }
+
+        public void restore_migration (Variant data) {
+            var d = new VariantDict (data);
+            string id = (d.lookup_value ("machine", VariantType.STRING) ?? new Variant.string ("")).get_string ();
+            string page = (d.lookup_value ("page", VariantType.STRING) ?? new Variant.string ("")).get_string ();
+            current = id != "" ? manager.store.find (id) : null;
+            if (current != null && (page == "details" || page == "snapshots")) show_page (page);
+            else show_page (manager.store.items.size == 0 ? "welcome" : "grid");
+        }
+
         private void go_back () {
             string page = stack.visible_child_name;
             if (page == "snapshots") {

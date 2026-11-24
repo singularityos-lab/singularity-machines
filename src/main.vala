@@ -2,7 +2,7 @@ using Gtk;
 
 namespace Singularity.Apps.Machines {
 
-    public class MachinesApp : Singularity.Application {
+    public class MachinesApp : Singularity.Application, Singularity.Migration.Migratable {
         public GLib.Settings settings { get; private set; }
         public MachineManager manager { get; private set; }
         private MachinesWindow? window;
@@ -107,13 +107,7 @@ namespace Singularity.Apps.Machines {
         }
 
         public override void activate () {
-            if (window == null) {
-                window = new MachinesWindow (this);
-                window.close_request.connect (() => {
-                    window = null;
-                    return false;
-                });
-            }
+            if (window == null) adopt (new MachinesWindow (this));
             window.present ();
             if (new_pending) {
                 new_pending = false;
@@ -124,6 +118,42 @@ namespace Singularity.Apps.Machines {
                 pending_open = null;
                 window.create_from.begin (path);
             }
+        }
+
+        private void adopt (MachinesWindow w) {
+            window = w;
+            w.close_request.connect (() => {
+                if (window == w) window = null;
+                return false;
+            });
+        }
+
+        public void prepare_move () throws Singularity.Migration.MigrationError {
+            if (window != null) window.prepare_move ();
+        }
+
+        public Variant save_model () {
+            return new VariantDict ().end ();
+        }
+
+        public async void restore_model (Variant model) throws Error {
+        }
+
+        public string window_kind (Gtk.Window w) {
+            return (w is MachinesWindow) ? "machines" : "";
+        }
+
+        public Variant save_window (Gtk.Window w) {
+            return ((MachinesWindow) w).save_migration ();
+        }
+
+        public async Gtk.Window? rebuild_window (string kind, Variant data) throws Error {
+            if (kind != "machines") return null;
+            if (window != null) window.destroy ();
+            var w = new MachinesWindow (this);
+            adopt (w);
+            w.restore_migration (data);
+            return w;
         }
 
         public override void open (File[] files, string hint) {
