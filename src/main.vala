@@ -2,7 +2,7 @@ using Gtk;
 
 namespace Singularity.Apps.Machines {
 
-    public class MachinesApp : Singularity.Application, Singularity.Migration.Migratable {
+    public class MachinesApp : Singularity.Application, Singularity.Migration.Migratable, Singularity.Startup.Bootable {
         public GLib.Settings settings { get; private set; }
         public MachineManager manager { get; private set; }
         private MachinesWindow? window;
@@ -90,7 +90,7 @@ namespace Singularity.Apps.Machines {
             add_action (settings_action);
             var new_machine = new SimpleAction ("new-machine", null);
             new_machine.activate.connect (() => {
-                activate ();
+                show_window ();
                 if (window != null) window.choose_source ();
             });
             add_action (new_machine);
@@ -102,11 +102,42 @@ namespace Singularity.Apps.Machines {
         }
 
         internal MachinesWindow agent_window () {
-            if (window == null) activate ();
+            if (window == null) show_window ();
             return window;
         }
 
-        public override void activate () {
+        public Singularity.Startup.Plan build_plan (Singularity.Startup.Request request) {
+            var plan = new Singularity.Startup.Plan ();
+            plan.version = "machines-1";
+            if (request.kind == Singularity.Startup.RequestKind.SERVICE) {
+                plan.main ("ready", Singularity.Startup.Category.PREPARE, (c) => {})
+                    .reaches (Singularity.Startup.Milestone.SHELL_READY)
+                    .reaches (Singularity.Startup.Milestone.CONTENT_READY)
+                    .reaches (Singularity.Startup.Milestone.INTERACTIVE);
+                return plan;
+            }
+            var shell = plan.main ("window", Singularity.Startup.Category.SHELL, (c) => {
+                show_window ();
+                c.window = window;
+            }).reaches (Singularity.Startup.Milestone.SHELL_READY);
+            if (request.kind == Singularity.Startup.RequestKind.OPEN) {
+                var files = request.files ();
+                plan.main ("open-file", Singularity.Startup.Category.CONTENT, (c) => open_files (files))
+                    .depends_on ("window")
+                    .reaches (Singularity.Startup.Milestone.CONTENT_READY)
+                    .reaches (Singularity.Startup.Milestone.INTERACTIVE);
+            } else {
+                shell.reaches (Singularity.Startup.Milestone.CONTENT_READY).reaches (Singularity.Startup.Milestone.INTERACTIVE);
+            }
+            return plan;
+        }
+
+        public void handle_request (Singularity.Startup.Request request) {
+            if (request.kind == Singularity.Startup.RequestKind.OPEN) open_files (request.files ());
+            else show_window ();
+        }
+
+        private void show_window () {
             if (window == null) adopt (new MachinesWindow (this));
             window.present ();
             if (new_pending) {
@@ -163,9 +194,9 @@ namespace Singularity.Apps.Machines {
             return w;
         }
 
-        public override void open (File[] files, string hint) {
+        private void open_files (File[] files) {
             if (files.length > 0 && files[0].get_path () != null) pending_open = files[0].get_path ();
-            activate ();
+            show_window ();
         }
 
         private const string CSS = """
